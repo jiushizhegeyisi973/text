@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<style>
+	.queue{
+		position: relative;
+	    height: 100px;
+	    overflow: hidden;
+	}
+	.queue li{
+		float: left;
+		list-style: none;
+		padding: 2px 5px;
+		margin: 5px;
+		background-color: red;
+		color: white;
+		height: 100%;
+	}
+	.clearfix { 
+		  *zoom: 1; 
+		} 
+	.clearfix:before, .clearfix:after { 
+		  display: table; 
+		  line-height: 0; 
+		  content: ""; 
+		} 
+	.clearfix:after { 
+		  clear: both; 
+		} 
+</style>
+<body>
+	<div class="content">
+		<input type="text" class="queueInput">
+		<button class="leftIn">左侧入</button>
+		<button class="rightIn">右侧入</button>
+		<button class="leftOut">左侧出</button>
+		<button class="rightOut">右侧出</button>
+		<button class="bubbleSort">冒泡排序</button>
+		<ul class="queue clearfix">
+			
+		</ul>
+	</div>
+<script type="text/javascript">
+(function() {
+	var queue = [10,20,80,50,30];
+	var btnLeftIn, 	btnRightIn, btnLeftOut, btnRightOut, btnBubbleSort;
+
+	btnLeftIn = document.querySelectorAll('.leftIn')[0];
+	btnLeftIn.addEventListener('click', function() {
+		if (queue.length >= 60) {
+			alert('队列已满，最大长度为60.');
+			return;
+		};
+		var value = inputValue();
+		if (!validateValue(value)){return};
+		queue.unshift(value);
+		clear();
+		render(queue);
+	});
+
+	btnRightIn = document.querySelectorAll('.rightIn')[0];
+	btnRightIn.addEventListener('click', function() {
+		if (queue.length >= 60) {
+			alert('队列已满，最大长度为60.');
+			return;
+		};
+		var value = inputValue();
+		if (!validateValue(value)){return};
+		queue.push(value);
+		clear();
+		render(queue);
+	});
+
+	btnLeftOut = document.querySelectorAll('.leftOut')[0];
+	btnLeftOut.addEventListener('click', function() {
+		var value;
+		if (queue.length == 0) {
+			alert('队列以空');
+			return;
+		};
+		value = queue.shift();
+		alert(value + '已出站');
+		clear();
+		render(queue);
+	});
+
+	btnRightOut = document.querySelectorAll('.rightOut')[0];
+	btnRightOut.addEventListener('click', function() {
+		var value;
+		if (queue.length == 0) {
+			alert('队列以空');
+			return;
+		};
+		value = queue.pop();
+		alert(value + '已出站');
+		clear();
+		render(queue);
+	});
+
+	btnBubbleSort = document.querySelectorAll('.bubbleSort')[0];
+	btnBubbleSort.addEventListener('click', function() {
+		var record = [];
+		bubbleSort(queue, record);
+		if (record.length <= 1) {return};
+		changeHandler(record);
+	});	
+
+	function render(que, i, j) {
+		var htmlFragment, htmlQue;
+
+		htmlFlagment = document.createDocumentFragment();
+		htmlQue = document.querySelectorAll('.queue')[0];
+
+		que.map((item, index) => {
+			let li = document.createElement('li');
+			li.style.marginTop = (100 - item) + 'px';
+			// li.textContent = item;
+			if (index == i) {
+				li.style.backgroundColor = 'blue';
+			};
+			if (index == j) {
+				li.style.backgroundColor = 'yellow';
+			};
+			htmlFlagment.appendChild(li);
+		});
+		htmlQue.appendChild(htmlFlagment);
+	};
+	render(queue);
+
+	function clear(){
+		var htmlQue = document.querySelectorAll('.queue')[0];
+		htmlQue.innerHTML = '';
+	}
+
+	function inputValue(){
+		return document.querySelectorAll('.queueInput')[0].value;
+	}
+
+	function isNumber(value) {
+		return toString.call(Number(value)) === '[object Number]';
+	}
+
+	function validateValue(value){
+		value = value.replace(/\s/g, '');
+		if (value.length == 0) {
+			alert('请先输入数字。');
+			return false;
+		}else if(!isNumber(value)){
+			alert('请输入数字。');
+			return false;
+		}else if(value > 100 || value < 0){
+			alert('请输入1-100之间的数字。');
+			return false;
+		}else{
+			return true;
+		}
+	};
+
+	function quickSort(arr){
+		var temp, left = [], right = [];
+		if (arr.length <= 1) {return arr};
+		temp = arr.splice(0, 1)[0];
+		arr.map(item => {
+			if (item < temp) {
+				left.push(item);
+			}else{
+				right.push(item);
+			}
+		});
+		return quickSort(left).concat([temp], quickSort(right));
+	}
+
+	function bubbleSort(arr, record){
+		if(arr.length <= 1) {
+		    return arr;
+		}
+		for(var j = 0; j < arr.length; j++) {
+		    for(var i = 0; i < arr.length - j; i++) {
+			    record.push({
+			      	i: i,
+			      	j: i+1,
+			      	bubbleArr: arr.slice(0)
+			    });
+			    if(arr[i] > arr[i+1]) {
+			        var tmp = arr[i];
+			        arr[i] = arr[i+1];
+			        arr[i+1] = tmp;
+
+			        record.push({
+				      	i: i,
+				      	j: i+1,
+				      	bubbleArr: arr.slice(0)
+				    });
+			    }
+		    }
+		}
+	  return arr;
+	}
+
+	function changeHandler(arr){
+		setTimeout(function() {
+			if (arr.length == 0) {
+				clear();
+				render(queue);
+				return
+			};
+			var temp = arr.shift();
+			clear();
+			render(temp.bubbleArr, temp.i, temp.j);
+			setTimeout(arguments.callee, 500);
+		}, 500);
+	}
+		
+})();;
+
+</script>
+</body>
+</html>

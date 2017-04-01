@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<style>
+	.queue li{
+		float: left;
+		list-style: none;
+		padding: 2px 5px;
+		margin: 5px;
+		background-color: red;
+		color: white;
+	}
+</style>
+<body>
+	<div class="content">
+		<input type="text" class="queueInput">
+		<button class="leftIn">左侧入</button>
+		<button class="rightIn">右侧入</button>
+		<button class="leftOut">左侧出</button>
+		<button class="rightOut">右侧出</button>
+
+		<ul class="queue">
+			
+		</ul>
+	</div>
+<script type="text/javascript">
+(function() {
+	var queue = [];
+	var btnLeftIn, 	btnRightIn, btnLeftOut, btnRightOut;
+
+	btnLeftIn = document.querySelectorAll('.leftIn')[0];
+	btnLeftIn.addEventListener('click', function() {
+		var value = inputValue();
+		if (!validateValue(value)){return};
+		queue.unshift(value);
+		clear();
+		render(queue);
+	});
+
+	btnRightIn = document.querySelectorAll('.rightIn')[0];
+	btnRightIn.addEventListener('click', function() {
+		var value = inputValue();
+		if (!validateValue(value)){return};
+		queue.push(value);
+		clear();
+		render(queue);
+	});
+
+	btnLeftOut = document.querySelectorAll('.leftOut')[0];
+	btnLeftOut.addEventListener('click', function() {
+		var value;
+		if (queue.length == 0) {
+			alert('队列以空');
+			return;
+		};
+		value = queue.shift();
+		alert(value + '已出站');
+		clear();
+		render(queue);
+	});
+
+	btnRightOut = document.querySelectorAll('.rightOut')[0];
+	btnRightOut.addEventListener('click', function() {
+		var value;
+		if (queue.length == 0) {
+			alert('队列以空');
+			return;
+		};
+		value = queue.pop();
+		alert(value + '已出站');
+		clear();
+		render(queue);
+	});
+
+	function render(que) {
+		var htmlFragment, htmlQue;
+
+		htmlFlagment = document.createDocumentFragment();
+		htmlQue = document.querySelectorAll('.queue')[0];
+
+		que.map(item => {
+			let li = document.createElement('li');
+			li.textContent = item;
+			htmlFlagment.appendChild(li);
+		});
+		htmlQue.appendChild(htmlFlagment);
+	};
+
+	function clear(){
+		var htmlQue = document.querySelectorAll('.queue')[0];
+		htmlQue.innerHTML = '';
+	}
+
+	function inputValue(){
+		return document.querySelectorAll('.queueInput')[0].value;
+	}
+
+	function isNumber(value) {
+		return toString.call(Number(value)) === '[object Number]';
+	}
+
+	function validateValue(value) {
+		value = value.replace(/\s/g, '');
+		if (value.length == 0) {
+			alert('请先输入数字。');
+			return false;
+		}else if(!isNumber(value)){
+			alert('请输入数字。');
+			return false;
+		}else{
+			return true;
+		}
+	};
+
+
+})();
+
+</script>
+</body>
+</html>
